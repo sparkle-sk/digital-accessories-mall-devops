@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.OrderItemMapper">
+
+    <insert id="insert" parameterType="com.example.entity.OrderItem" useGeneratedKeys="true" keyProperty="id">
+        insert into order_item (order_id, goods_id, sku_id, goods_name, goods_img, spec, price, num)
+        values (#{orderId}, #{goodsId}, #{skuId}, #{goodsName}, #{goodsImg}, #{spec}, #{price}, #{num})
+    </insert>
+
+    <select id="selectByOrderId" resultType="com.example.entity.OrderItem">
+        select * from order_item where order_id = #{orderId}
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.OrderItem">
+        select * from order_item where id = #{id}
+    </select>
+
+    <select id="selectAll" resultType="com.example.entity.OrderItem">
+        select * from order_item
+    </select>
+
+</mapper>

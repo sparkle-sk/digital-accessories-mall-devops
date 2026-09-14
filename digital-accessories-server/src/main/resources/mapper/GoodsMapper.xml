@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.GoodsMapper">
+
+    <select id="selectAll" resultType="com.example.entity.Goods">
+        select goods.*, category.name as categoryName
+        from goods
+        left join category on goods.category_id = category.id
+        <where>
+            <if test="name != null and name != ''">
+                and goods.name like concat('%', #{name}, '%')
+            </if>
+            <if test="categoryId != null">
+                and goods.category_id = #{categoryId}
+            </if>
+            <if test="brand != null and brand != ''">
+                and goods.brand = #{brand}
+            </if>
+        </where>
+        order by goods.id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.Goods">
+        select * from goods where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.example.entity.Goods" useGeneratedKeys="true" keyProperty="id">
+        insert into goods (name, description, price, stock, img, category_id, sales, store, brand, content, spec_list)
+        values (#{name}, #{description}, #{price}, #{stock}, #{img}, #{categoryId}, 0, #{store}, #{brand}, #{content}, #{specList})
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Goods">
+        update goods
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="stock != null">stock = #{stock},</if>
+            <if test="img != null">img = #{img},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="sales != null">sales = #{sales},</if>
+            <if test="store != null">store = #{store},</if>
+            <if test="brand != null">brand = #{brand},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="specList != null">spec_list = #{specList},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateSales">
+        update goods set sales = sales + #{num} where id = #{id}
+    </update>
+
+    <update id="updateStock">
+        update goods set stock = stock - #{num} where id = #{id} and stock >= #{num}
+    </update>
+
+    <update id="updateStockAndSales">
+        update goods set
+        stock = stock - #{num},
+        sales = sales + #{num}
+        where id = #{id} and stock >= #{num}
+    </update>
+
+    <update id="rollbackStockAndSales">
+        update goods set
+        stock = stock + #{num},
+        sales = sales - #{num}
+        where id = #{id}
+    </update>
+
+    <update id="updateStockDirect">
+        update goods set stock = #{total} where id = #{goodsId}
+    </update>
+
+    <delete id="deleteById">
+        delete from goods where id = #{id}
+    </delete>
+    <select id="countLowStock" resultType="int">
+        select count(*) from goods where stock &lt; #{threshold}
+    </select>
+</mapper>

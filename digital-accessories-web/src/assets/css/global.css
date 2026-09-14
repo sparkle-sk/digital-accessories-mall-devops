@@ -1,0 +1,34 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+a {
+    color: #1967e3;
+    text-decoration: none;
+}
+
+th {
+    color: #333 !important;
+}
+
+.card {
+background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  margin-bottom: 20px;
+}
+
+:deep(.el-button--primary) {
+  background: linear-gradient(to right, #2e3143, #43475e);
+  border: none;
+  border-radius: 6px;
+}

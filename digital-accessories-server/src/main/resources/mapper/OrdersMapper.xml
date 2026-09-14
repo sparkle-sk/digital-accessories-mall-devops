@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.OrdersMapper">
+
+    <resultMap id="OrdersMap" type="com.example.entity.Orders">
+        <id column="id" property="id" />
+        <result column="order_no" property="orderNo" />
+        <result column="user_id" property="userId" />
+        <result column="total_price" property="totalPrice" />
+        <result column="status" property="status" />
+        <result column="time" property="time" />
+        <result column="goods_name" property="goodsName" />
+        <result column="address" property="address" />
+        <result column="user_delete" property="userDelete" />
+        <result column="admin_delete" property="adminDelete" />
+        <result column="receipt_time" property="receiptTime" />
+        <result column="finish_time" property="finishTime" />
+        <result column="return_reason" property="returnReason" />
+        <result column="express_no" property="expressNo" />
+        <result column="cancel_reason" property="cancelReason" />
+        <result column="reject_reason" property="rejectReason" />
+        <result column="pay_no" property="payNo" />
+        <result column="pay_time" property="payTime" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.example.entity.Orders" useGeneratedKeys="true" keyProperty="id">
+        insert into orders (order_no, user_id, total_price, status, time, goods_name, address)
+        values (#{orderNo}, #{userId}, #{totalPrice}, #{status}, #{time}, #{goodsName}, #{address})
+    </insert>
+
+    <update id="updateById">
+        update orders
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
+            <if test="userDelete != null">user_delete = #{userDelete},</if>
+            <if test="adminDelete != null">admin_delete = #{adminDelete},</if>
+            <if test="receiptTime != null">receipt_time = #{receiptTime},</if>
+            <if test="finishTime != null">finish_time = #{finishTime},</if>
+            <if test="returnReason != null">return_reason = #{returnReason},</if>
+            <if test="expressNo != null">express_no = #{expressNo},</if>
+            <if test="cancelReason != null">cancel_reason = #{cancelReason},</if>
+            <if test="rejectReason != null">reject_reason = #{rejectReason},</if>
+            <if test="payNo != null">pay_no = #{payNo},</if>
+            <if test="payTime != null">pay_time = #{payTime},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateAutoConfirm">
+        UPDATE orders SET status = '已完成', finish_time = NOW()
+        WHERE status = '已签收' AND receipt_time IS NOT NULL
+        AND receipt_time &lt; DATE_SUB(NOW(), INTERVAL 7 DAY)
+    </update>
+
+    <delete id="deleteById">
+        delete from orders where id = #{id}
+    </delete>
+
+    <select id="selectById" resultMap="OrdersMap">
+        select * from orders where id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="OrdersMap">
+        select orders.*, user.name as userName, user.username as userAccount
+        from orders
+        left join user on orders.user_id = user.id
+        <where>
+            <if test="userId != null">
+                and orders.user_id = #{userId}
+                and orders.user_delete = 0
+            </if>
+            <if test="userId == null">
+                and orders.admin_delete = 0
+            </if>
+            <if test="status != null and status != ''">
+                <choose>
+                    <when test="status == '售后'">
+                        and orders.status in ('退货待审核','待用户发货','待商家收货','已退款')
+                    </when>
+                    <otherwise>
+                        and orders.status = #{status}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                and (
+                orders.order_no like concat('%', #{orderNo}, '%')
+                or orders.goods_name like concat('%', #{orderNo}, '%')
+                or exists (select 1 from order_item where order_item.order_id = orders.id and order_item.goods_name like concat('%', #{orderNo}, '%'))
+                )
+            </if>
+        </where>
+        order by orders.id desc
+    </select>
+
+    <select id="totalRevenue" resultType="java.lang.Double">
+        select sum(total_price) from orders where admin_delete = 0 and status = '已完成'
+    </select>
+
+    <select id="selectCategoryCount" resultType="com.example.entity.ReportVO">
+        select status as name, count(*) as value from orders where admin_delete = 0 group by status
+    </select>
+
+    <select id="selectExpiredOrders" resultMap="OrdersMap">
+        select * from orders where status = '待付款' and time &lt; DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 24 HOUR), '%Y-%m-%d %H:%i:%s')
+    </select>
+
+    <select id="todayRevenue" resultType="java.lang.Double">
+        select sum(total_price) from orders where admin_delete = 0 and status = '已完成' and time like concat(curdate(), '%')
+    </select>
+
+    <select id="todayOrders" resultType="java.lang.Integer">
+        select count(*) from orders where admin_delete = 0 and status = '已完成' and time like concat(curdate(), '%')
+    </select>
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CollectMapper">
+
+    <insert id="insert">
+        insert into collect (goods_id, sku_id, user_id, time, goods_name, goods_img, spec, price)
+        values (#{goodsId}, #{skuId}, #{userId}, #{time}, #{goodsName}, #{goodsImg}, #{spec}, #{price})
+    </insert>
+
+    <delete id="deleteById">
+        delete from collect where id = #{id}
+    </delete>
+
+    <select id="selectByUserIdGoodsIdAndSpec" resultType="com.example.entity.Collect">
+        select * from collect
+        where user_id = #{userId} and goods_id = #{goodsId} and spec = #{spec}
+    </select>
+
+    <select id="selectAll" resultType="com.example.entity.Collect">
+        select
+        c.*,
+        g.name as goodsName,
+        IFNULL(c.goods_img, g.img) as goodsImg,
+        IFNULL(c.price, g.price) as goodsPrice,
+        g.store as storeName
+        from collect c
+        left join goods g on c.goods_id = g.id
+        <where>
+            <if test="userId != null"> and c.user_id = #{userId}</if>
+            <if test="goodsId != null"> and c.goods_id = #{goodsId}</if>
+            <if test="spec != null"> and c.spec = #{spec}</if>
+            <if test="goodsName != null and goodsName != ''">
+                and g.name like concat('%', #{goodsName}, '%')
+            </if>
+        </where>
+        order by c.id desc
+    </select>
+
+</mapper>

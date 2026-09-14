@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.AddressMapper">
+
+    <resultMap id="AddressMap" type="com.example.entity.Address">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="name" property="name" />
+        <result column="phone" property="phone" />
+        <result column="address" property="address" />
+        <result column="is_default" property="isDefault" />
+    </resultMap>
+
+    <insert id="insert">
+        insert into address (user_id, name, phone, address, is_default)
+        values (#{userId}, #{name}, #{phone}, #{address}, #{isDefault})
+    </insert>
+
+    <delete id="deleteById">
+        delete from address where id = #{id}
+    </delete>
+
+    <select id="selectById" resultMap="AddressMap">
+        select * from address where id = #{id}
+    </select>
+
+    <update id="updateById">
+        update address
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="isDefault != null">is_default = #{isDefault},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="cancelDefault">
+        update address set is_default = 0 where user_id = #{userId}
+    </update>
+
+    <select id="selectAll" resultMap="AddressMap">
+        select * from address
+        <where>
+            <if test="userId != null"> and user_id = #{userId}</if>
+        </where>
+        order by is_default desc, id asc
+    </select>
+
+</mapper>

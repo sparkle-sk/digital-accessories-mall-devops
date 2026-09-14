@@ -1,0 +1,45 @@
+# ===== Maven 构建产物 =====
+target/
+*.jar
+*.war
+.mvn/wrapper/maven-wrapper.jar
+
+# ===== IDE =====
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.project
+.classpath
+.settings/
+
+# ===== 系统文件 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== 日志 =====
+*.log
+logs/
+
+# ===== 环境配置（不要把密码推到 Git） =====
+.env
+.env.local
+application-local.yml
+application-prod.yml
+
+# ===== 前端（如果前端在同一仓库） =====
+frontend/node_modules/
+frontend/dist/
+frontend/package-lock.json
+!**/package.json
+
+# ===== Docker 临时文件 =====
+**/*.tar
+
+# ===== 不上传到作品集的内容 =====
+files/
+uml/
+*.bak
+*.tmp

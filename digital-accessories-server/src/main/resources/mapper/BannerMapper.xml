@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.BannerMapper">
+
+    <select id="selectAll" resultType="com.example.entity.Banner">
+        select id, img, title, goods_id as goodsId from banner
+        <where>
+            <if test="title != null and title != ''">
+                and title like concat('%', #{title}, '%')
+            </if>
+        </where>
+        order by id desc
+    </select>
+
+    <insert id="insert" parameterType="com.example.entity.Banner">
+        insert into banner (img, title, goods_id)
+        values (#{img}, #{title}, #{goodsId})
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Banner">
+        update banner set
+        img = #{img},
+        title = #{title},
+        goods_id = #{goodsId}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from banner where id = #{id}
+    </delete>
+
+</mapper>

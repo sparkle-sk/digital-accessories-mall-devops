@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CartMapper">
+
+    <insert id="insert">
+        insert into cart (goods_id, sku_id, user_id, num, time, spec, price, img)
+        values (#{goodsId}, #{skuId}, #{userId}, #{num}, #{time}, #{spec}, #{price}, #{img})
+    </insert>
+
+    <update id="updateById">
+        update cart set
+        sku_id = #{skuId},
+        num = #{num},
+        time = #{time},
+        price = #{price},
+        img = #{img}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from cart where id = #{id}
+    </delete>
+
+    <select id="selectByUserIdGoodsIdAndSpec" resultType="com.example.entity.Cart">
+        select * from cart
+        where user_id = #{userId}
+        and goods_id = #{goodsId}
+        and spec = #{spec}
+    </select>
+
+    <select id="selectAll" resultType="com.example.entity.Cart">
+        select cart.*,
+        goods.name as goodsName,
+        IFNULL(cart.img, goods.img) as goodsImg,
+        IFNULL(cart.price, goods.price) as goodsPrice,
+        goods.store as storeName,
+        sku.stock as stock  from cart
+        left join goods on cart.goods_id = goods.id
+        left join goods_sku sku on (cart.goods_id = sku.goods_id and cart.spec = sku.spec_value)
+        where cart.user_id = #{userId}
+        order by cart.id desc
+    </select>
+</mapper>
