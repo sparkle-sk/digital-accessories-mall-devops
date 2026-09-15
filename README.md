@@ -1,3 +1,5 @@
+[![CI](https://github.com/sparkle-sk/digital-accessories-mall-devops/actions/workflows/ci.yml/badge.svg)](https://github.com/sparkle-sk/digital-accessories-mall-devops/actions/workflows/ci.yml)
+
 # Digital Accessories Mall — DevOps 实战作品集
 
 > 基于毕业设计「数码配件电商购物系统」二次开发，专注演示**生产级 DevOps 能力**：
@@ -29,8 +31,8 @@
 docker compose up -d
 
 # 浏览器访问
-# 前端：http://localhost
 # 后端 API：http://localhost:8080
+# 经 Nginx 反向代理：http://localhost:8082
 # Swagger（如有）：http://localhost:8080/swagger-ui.html
 ```
 
@@ -48,15 +50,18 @@ docker compose up -d
 
 ```
 digital-accessories-mall-devops/
-├── src/                    # SpringBoot 后端源码
-├── frontend/               # Vue3 前端源码（如分离）
-├── pom.xml                 # Maven 配置
-├── Dockerfile              # 后端镜像构建（多阶段）
-├── docker-compose.yml      # 多服务编排
-├── nginx.conf              # 反向代理 + 前端托管配置
-├── .github/workflows/      # GitHub Actions 配置
-│   └── ci.yml              # CI 流水线
-└── README.md               # 本文件
+├── digital-accessories-server/   # SpringBoot 后端源码 + pom.xml
+│   ├── pom.xml
+│   └── src/main/
+├── digital-accessories-web/      # Vue3 前端源码
+├── digital_accessories.sql       # MySQL 表结构（CI 自动导入测试库）
+├── settings.xml                  # 阿里云 Maven 镜像（国内拉依赖加速）
+├── Dockerfile                    # 后端镜像构建（多阶段 + 阿里云镜像）
+├── docker-compose.yml            # 多服务编排（MySQL + App + Nginx）
+├── nginx.conf                    # 反向代理 + 前端托管配置
+├── .github/workflows/            # GitHub Actions 配置
+│   └── ci.yml                    # CI 流水线（测试 + 打包镜像）
+└── README.md                     # 本文件
 ```
 
 ## 进阶方向（规划中）
