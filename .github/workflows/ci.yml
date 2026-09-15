@@ -68,7 +68,9 @@ jobs:
           mysql -h 127.0.0.1 -uroot -proot123 digital_mall_test < digital_accessories.sql
 
       # 真跑测试（连接 127.0.0.1 的 MySQL 服务容器）
+      # 注意：pom.xml 在 ./digital-accessories-server 子目录下，所以要先 cd 进去
       - name: Run tests
+        working-directory: ./digital-accessories-server
         run: mvn -B clean verify
         env:
           SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/digital_mall_test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
