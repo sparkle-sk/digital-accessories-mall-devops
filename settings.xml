@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+  <!--
+    国内 Docker / CI 构建 Maven 依赖时常因连不上 repo.maven.apache.org 失败。
+    这里把 central 镜像替换为阿里云公共仓库，对海外 CI 也只是更快不破坏行为。
+  -->
+  <mirrors>
+    <mirror>
+      <id>aliyun-public</id>
+      <name>Aliyun Public Maven Mirror</name>
+      <url>https://maven.aliyun.com/repository/public</url>
+      <mirrorOf>central</mirrorOf>
+    </mirror>
+  </mirrors>
+
+  <!-- 加速插件仓库（Spring Boot Maven Plugin 等也走这里） -->
+  <profiles>
+    <profile>
+      <id>aliyun-plugins</id>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>aliyun-plugin</id>
+          <url>https://maven.aliyun.com/repository/public</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>aliyun-plugins</activeProfile>
+  </activeProfiles>
+</settings>

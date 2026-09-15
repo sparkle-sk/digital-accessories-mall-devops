@@ -6,12 +6,14 @@
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /build
 
-# 先只复制 pom 拉依赖（利用 Docker 缓存，pom 不变就不重装）
-COPY digital-accessories-server/pom.xml .
-RUN mvn -B dependency:go-offline
+# 先拷 settings.xml 配阿里云镜像（国内拉依赖快、CI 也不受影响）
+COPY settings.xml /root/.m2/settings.xml
 
-# 再复制源码打包（跳过测试，速度更快；测试在 CI 阶段单独跑）
+# 复制 pom 与源码（跳过测试，测试在 CI 阶段单独跑）
+COPY digital-accessories-server/pom.xml .
 COPY digital-accessories-server/src ./src
+
+# 一条命令下载依赖 + 打包（与 CI 的 mvn 调用保持一致，少一道易翻车的 go-offline）
 RUN mvn -B clean package -DskipTests
 
 # ==== 阶段 2：用最小化 JRE 跑 ====

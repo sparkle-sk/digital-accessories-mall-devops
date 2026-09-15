@@ -16,7 +16,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql        # 数据持久化（容器删了数据还在）
     ports:
-      - "3306:3306"
+      - "3307:3306"   # 宿主机 3307 → 容器 3306（避开本机可能占 3306 的 MySQL 服务；容器内部 Spring Boot 仍走 mysql:3306）
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot123"]
       interval: 10s
@@ -39,7 +39,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: root123
       TZ: Asia/Shanghai
     ports:
-      - "8080:8080"
+      - "8080:9090"   # 宿主机 8080 → 容器 9090（Spring Boot 实际监听端口是 application.yml 里的 9090）
 
   # ===== Nginx 反向代理 + 前端静态托管 =====
   nginx:
@@ -53,7 +53,7 @@ services:
       # 把前端 dist 目录挂进去；先在宿主机 npm run build 生成 dist/
       - ./frontend/dist:/usr/share/nginx/html:ro
     ports:
-      - "80:80"
+      - "8082:80"     # 宿主机 8082 → 容器 80（避开之前练手的 my-nginx 占用的 80）
 
 volumes:
   mysql_data:
