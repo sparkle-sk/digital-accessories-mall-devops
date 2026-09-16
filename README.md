@@ -2,7 +2,7 @@
 
 # Digital Accessories Mall — DevOps 实战作品集
 
-> 基于毕业设计「数码配件电商购物系统」二次开发，专注演示**生产级 DevOps 能力**：
+> 个人独立开发的全栈电商项目，并在此基础上完整跑通生产级 DevOps 全链路：
 > Docker 容器化、docker-compose 一键编排、GitHub Actions 自动化 CI、可观测性、接口自动化测试。
 
 ---
